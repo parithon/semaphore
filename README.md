@@ -51,7 +51,32 @@ Azure Key Vault integration allows you to store access keys securely in Microsof
 
 #### Configuration
 
-To use Azure Key Vault as a secret storage backend:
+Semaphore UI provides two ways to configure Azure Key Vault integration:
+
+##### Option 1: Centralized Azure Configuration (Recommended)
+
+1. **Set up Azure resources** as an administrator:
+   - Create an Azure Key Vault in your Azure subscription
+   - Register a Service Principal in Azure Active Directory with access to the Key Vault
+   - Grant the Service Principal "Key Vault Secrets Officer" role or equivalent permissions
+
+2. **Configure Azure in Semaphore UI** (Admin only):
+   - Navigate to the "Azure" page in the main menu
+   - Click "New Azure Configuration"
+   - Provide the Azure credentials:
+     - **Name**: A descriptive name for this configuration
+     - **Description**: Optional description
+     - **Tenant ID**: Your Azure Active Directory tenant ID
+     - **Client ID**: Service Principal application ID
+     - **Client Secret**: Service Principal client secret
+   - Test the connection to verify the configuration
+
+3. **Use Azure storage when creating keys**:
+   - When creating access keys, select an Azure secret storage
+   - Choose from available Azure configurations, subscriptions, and key vaults via dropdowns
+   - Semaphore will automatically discover available resources
+
+##### Option 2: Manual Configuration (Per Storage)
 
 1. **Create an Azure Key Vault** in your Azure subscription
 2. **Register a Service Principal** in Azure Active Directory with access to the Key Vault
