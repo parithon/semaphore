@@ -22,7 +22,6 @@
         dense
     ></v-text-field>
 
-    <!--
     <v-select
         v-model="item.type"
         :label="$t('type')"
@@ -35,7 +34,6 @@
         outlined
         dense
     />
-    -->
 
     <div v-if="item.type === 'vault'">
 
@@ -68,6 +66,62 @@
         :disabled="formSaving"
       />
     </div>
+
+    <div v-if="item.type === 'azure'">
+
+      <v-text-field
+          v-model="item.params.vault_url"
+          :label="$t('Vault URL')"
+          :disabled="formSaving"
+          :rules="[v => !!v || $t('vault_url_required')]"
+          required
+          data-testid="secretStorage-azureVaultURL"
+          outlined
+          dense
+          hint="e.g., https://your-keyvault.vault.azure.net/"
+      ></v-text-field>
+
+      <v-text-field
+          v-model="item.params.tenant_id"
+          :label="$t('Tenant ID')"
+          :disabled="formSaving"
+          :rules="[v => !!v || $t('tenant_id_required')]"
+          required
+          data-testid="secretStorage-azureTenantID"
+          outlined
+          dense
+      ></v-text-field>
+
+      <v-text-field
+          v-model="item.params.client_id"
+          :label="$t('Client ID')"
+          :disabled="formSaving"
+          :rules="[v => !!v || $t('client_id_required')]"
+          required
+          data-testid="secretStorage-azureClientID"
+          outlined
+          dense
+      ></v-text-field>
+
+      <v-text-field
+          v-model="item.params.client_secret"
+          :label="$t('Client Secret')"
+          :disabled="formSaving"
+          :rules="[v => !!v || $t('client_secret_required')]"
+          required
+          data-testid="secretStorage-azureClientSecret"
+          outlined
+          dense
+          type="password"
+          append-icon="mdi-lock"
+      ></v-text-field>
+
+      <v-checkbox
+        v-model="item.readonly"
+        :label="$t('Read only')"
+        :disabled="formSaving"
+      />
+    </div>
   </v-form>
 </template>
 <script>
@@ -85,6 +139,9 @@ export default {
       secretStorageTypes: [{
         id: 'vault',
         name: 'Hashicorp Vault',
+      }, {
+        id: 'azure',
+        name: 'Azure Key Vault',
       }],
     };
   },

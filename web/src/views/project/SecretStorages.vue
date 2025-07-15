@@ -18,7 +18,7 @@
     <EditDialog
       v-model="editDialog"
       :save-button-text="itemId === 'new' ? $t('create') : $t('save')"
-      :title="`${itemId === 'new' ? $t('nnew') : $t('edit')} Hashicorp Vault Storage`"
+      :title="`${itemId === 'new' ? $t('nnew') : $t('edit')} ${itemType === 'azure' ? 'Azure Key Vault' : 'Hashicorp Vault'} Storage`"
       :max-width="450"
       @save="loadItems()"
     >
@@ -68,6 +68,17 @@
               </v-icon>
             </v-list-item-icon>
             <v-list-item-title>Hashicorp Vault</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            link
+            @click="editItem('new'); itemType = 'azure';"
+          >
+            <v-list-item-icon>
+              <v-icon
+              >mdi-microsoft-azure
+              </v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Azure Key Vault</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -126,7 +137,7 @@
           class="mr-3"
           small
         >
-          $vuetify.icons.hashicorp_vault
+          {{ item.type === 'azure' ? 'mdi-microsoft-azure' : '$vuetify.icons.hashicorp_vault' }}
         </v-icon>
 
         <span class="mr-2">{{ item.name }}</span>

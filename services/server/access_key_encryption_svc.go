@@ -61,6 +61,20 @@ func (s *accessKeyEncryptionServiceImpl) getDeserializer(key *db.AccessKey) Acce
 		return &LocalAccessKeyDeserializer{}
 	}
 
+	// Get the storage configuration to determine the type
+	if key.ProjectID != nil {
+		storage, err := s.secretStorageRepo.GetSecretStorage(*key.ProjectID, *key.SourceStorageID)
+		if err == nil {
+			switch storage.Type {
+			case db.SecretStorageTypeAzure:
+				return NewAzureAccessKeyDeserializer(s.accessKeyRepo, s.secretStorageRepo, s)
+			case db.SecretStorageTypeVault:
+				return pro.NewVaultAccessKeyDeserializer(s.accessKeyRepo, s.secretStorageRepo, s)
+			}
+		}
+	}
+
+	// Default to vault for backward compatibility
 	return pro.NewVaultAccessKeyDeserializer(s.accessKeyRepo, s.secretStorageRepo, s)
 }
 
