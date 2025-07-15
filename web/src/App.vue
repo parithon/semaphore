@@ -468,6 +468,16 @@
                 </v-list-item-content>
               </v-list-item>
 
+              <v-list-item key="azure" to="/azure" v-if="user.admin">
+                <v-list-item-icon>
+                  <v-icon>mdi-microsoft-azure</v-icon>
+                </v-list-item-icon>
+
+                <v-list-item-content>
+                  Azure
+                </v-list-item-content>
+              </v-list-item>
+
               <v-list-item
                 key="tasks"
                 to="/tasks"

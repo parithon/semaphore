@@ -7,6 +7,7 @@ type SecretStorageType string
 const (
 	SecretStorageTypeLocal SecretStorageType = "local"
 	SecretStorageTypeVault SecretStorageType = "vault"
+	SecretStorageTypeAzure SecretStorageType = "azure"
 )
 
 type SecretStorage struct {
@@ -24,6 +25,13 @@ type VaultSecretStorageParams struct {
 	URL string `json:"url"`
 }
 
+type AzureSecretStorageParams struct {
+	VaultURL   string `json:"vault_url"`
+	TenantID   string `json:"tenant_id"`
+	ClientID   string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+}
+
 func (s *SecretStorage) ExtractParams(target any) (err error) {
 	content, err := json.Marshal(s.Params)
 	if err != nil {
@@ -32,8 +40,9 @@ func (s *SecretStorage) ExtractParams(target any) (err error) {
 
 	switch target.(type) {
 	case *VaultSecretStorageParams:
+	case *AzureSecretStorageParams:
 	default:
-		err = &ValidationError{"invalid target type for extracting VaultSecretStorageParams"}
+		err = &ValidationError{"invalid target type for extracting secret storage params"}
 		return
 	}
 

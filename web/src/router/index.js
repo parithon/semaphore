@@ -17,6 +17,7 @@ import Keys from '../views/project/Keys.vue';
 import Repositories from '../views/project/Repositories.vue';
 import Team from '../views/project/Team.vue';
 import Users from '../views/Users.vue';
+import Azure from '../views/Azure.vue';
 import Auth from '../views/Auth.vue';
 import New from '../views/project/New.vue';
 import Integrations from '../views/project/Integrations.vue';
@@ -143,6 +144,10 @@ const routes = [
   {
     path: '/users',
     component: Users,
+  },
+  {
+    path: '/azure',
+    component: Azure,
   },
   {
     path: '/runners',

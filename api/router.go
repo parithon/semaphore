@@ -89,6 +89,7 @@ func Route(
 	secretStorageService server.SecretStorageService,
 	accessKeyService server.AccessKeyService,
 	environmentService server.EnvironmentService,
+	azureService server.AzureService,
 ) *mux.Router {
 
 	projectController := &projects.ProjectController{ProjectService: projectService}
@@ -98,6 +99,7 @@ func Route(
 	secretStorageController := projects.NewSecretStorageController(store, secretStorageService)
 	repositoryController := projects.NewRepositoryController(accessKeyInstallationService)
 	keyController := projects.NewKeyController(accessKeyService)
+	azureController := NewAzureController(azureService)
 	projectsController := projects.NewProjectsController(accessKeyService)
 	terraformController := proApi.NewTerraformController(encryptionService)
 
@@ -184,6 +186,9 @@ func Route(
 	authenticatedAPI.Path("/users").HandlerFunc(addUser).Methods("POST")
 	authenticatedAPI.Path("/user").HandlerFunc(getUser).Methods("GET", "HEAD")
 
+	authenticatedAPI.Path("/azure").HandlerFunc(getAzureConfigs).Methods("GET", "HEAD")
+	authenticatedAPI.Path("/azure").HandlerFunc(addAzureConfig).Methods("POST")
+
 	authenticatedAPI.Path("/apps").HandlerFunc(getApps).Methods("GET", "HEAD")
 
 	tokenAPI := authenticatedAPI.PathPrefix("/user").Subrouter()
@@ -242,6 +247,14 @@ func Route(
 	userPasswordAPI.Path("/2fas/totp").HandlerFunc(enableTotp).Methods("POST")
 	userPasswordAPI.Path("/2fas/totp/{totp_id}/qr").HandlerFunc(totpQr).Methods("GET")
 	userPasswordAPI.Path("/2fas/totp/{totp_id}").HandlerFunc(disableTotp).Methods("DELETE")
+
+	azureConfigAPI := authenticatedAPI.Path("/azure/{config_id}").Subrouter()
+	azureConfigAPI.Use(getAzureConfigMiddleware)
+	azureConfigAPI.Methods("GET", "HEAD").HandlerFunc(getAzureConfig)
+	azureConfigAPI.Methods("PUT").HandlerFunc(updateAzureConfig)
+	azureConfigAPI.Methods("DELETE").HandlerFunc(deleteAzureConfig)
+	azureConfigAPI.Path("/subscriptions").HandlerFunc(azureController.GetAzureSubscriptions).Methods("GET", "HEAD")
+	azureConfigAPI.Path("/keyvaults").HandlerFunc(azureController.GetAzureKeyVaults).Methods("GET", "HEAD")
 
 	projectGet := authenticatedAPI.Path("/project/{project_id}").Subrouter()
 	projectGet.Use(projects.ProjectMiddleware)

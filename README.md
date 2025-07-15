@@ -41,6 +41,68 @@ Semaphore UI allows you to:
 5. **Inventory** is a collection of target hosts (servers, virtual machines, containers, etc.) on which tasks will be executed.
 6. **Variable Group** refers to a configuration context that holds sensitive information such as environment variables and secrets used by tasks during execution.
 
+## Secret Storage
+
+Semaphore UI supports multiple backends for storing sensitive information like access keys and secrets:
+
+### Azure Key Vault
+
+Azure Key Vault integration allows you to store access keys securely in Microsoft Azure's managed service.
+
+#### Configuration
+
+Semaphore UI provides two ways to configure Azure Key Vault integration:
+
+##### Option 1: Centralized Azure Configuration (Recommended)
+
+1. **Set up Azure resources** as an administrator:
+   - Create an Azure Key Vault in your Azure subscription
+   - Register a Service Principal in Azure Active Directory with access to the Key Vault
+   - Grant the Service Principal "Key Vault Secrets Officer" role or equivalent permissions
+
+2. **Configure Azure in Semaphore UI** (Admin only):
+   - Navigate to the "Azure" page in the main menu
+   - Click "New Azure Configuration"
+   - Provide the Azure credentials:
+     - **Name**: A descriptive name for this configuration
+     - **Description**: Optional description
+     - **Tenant ID**: Your Azure Active Directory tenant ID
+     - **Client ID**: Service Principal application ID
+     - **Client Secret**: Service Principal client secret
+   - Test the connection to verify the configuration
+
+3. **Use Azure storage when creating keys**:
+   - When creating access keys, select an Azure secret storage
+   - Choose from available Azure configurations, subscriptions, and key vaults via dropdowns
+   - Semaphore will automatically discover available resources
+
+##### Option 2: Manual Configuration (Per Storage)
+
+1. **Create an Azure Key Vault** in your Azure subscription
+2. **Register a Service Principal** in Azure Active Directory with access to the Key Vault
+3. **Configure the storage** in Semaphore UI:
+   - Navigate to your project → Keys → Storages
+   - Click "New Storage" → "Azure Key Vault"
+   - Provide the following configuration:
+     - **Vault URL**: Your Key Vault URL (e.g., `https://your-keyvault.vault.azure.net/`)
+     - **Tenant ID**: Your Azure Active Directory tenant ID
+     - **Client ID**: Service Principal application ID
+     - **Client Secret**: Service Principal client secret
+
+#### Required Azure Permissions
+
+The Service Principal needs the following Key Vault permissions:
+- **Secret permissions**: Get, Set, Delete, List
+- **Key Vault access policy** or **Azure RBAC role**: Key Vault Secrets Officer
+
+#### Usage
+
+Once configured, you can:
+- Select the Azure Key Vault storage when creating new access keys
+- Specify a custom secret name or let Semaphore generate one automatically
+- Secrets are stored and retrieved directly from Azure Key Vault
+- All access key types (SSH, Login/Password, String) are supported
+
 ## Getting Started
 
 You can install Semaphore using the following methods:

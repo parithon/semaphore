@@ -440,6 +440,15 @@ type SecretStorageRepository interface {
 	DeleteSecretStorage(projectID int, storageID int) error
 }
 
+// AzureConfigManager handles Azure configuration operations
+type AzureConfigManager interface {
+	GetAzureConfigs(params RetrieveQueryParams) ([]AzureConfig, error)
+	CreateAzureConfig(config AzureConfig) (AzureConfig, error)
+	DeleteAzureConfig(configID int) error
+	UpdateAzureConfig(config AzureConfig) error
+	GetAzureConfig(configID int) (AzureConfig, error)
+}
+
 // Store is the main interface that aggregates all specialized interfaces
 type Store interface {
 	ConnectionManager
@@ -461,6 +470,7 @@ type Store interface {
 	RunnerManager
 	EventManager
 	SecretStorageRepository
+	AzureConfigManager
 }
 
 var AccessKeyProps = ObjectProps{
@@ -646,6 +656,14 @@ var UserTotpProps = ObjectProps{
 	TableName:         "user__totp",
 	Type:              reflect.TypeOf(UserTotp{}),
 	PrimaryColumnName: "id",
+}
+
+var AzureConfigProps = ObjectProps{
+	TableName:            "azure_config",
+	Type:                 reflect.TypeOf(AzureConfig{}),
+	PrimaryColumnName:    "id",
+	SortableColumns:      []string{"name", "created"},
+	DefaultSortingColumn: "name",
 }
 
 func (p ObjectProps) GetReferringFieldsFrom(t reflect.Type) (fields []string, err error) {

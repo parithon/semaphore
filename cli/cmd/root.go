@@ -83,6 +83,7 @@ func runService() {
 	accessKeyService := server.NewAccessKeyService(store, encryptionService, store)
 	secretStorageService := server.NewSecretStorageService(store, accessKeyService)
 	environmentService := server.NewEnvironmentService(store, encryptionService)
+	azureService := server.NewAzureService(store)
 
 	taskPool := tasks.CreateTaskPool(
 		store,
@@ -127,6 +128,7 @@ func runService() {
 		secretStorageService,
 		accessKeyService,
 		environmentService,
+		azureService,
 	)
 
 	route.Use(func(next http.Handler) http.Handler {
