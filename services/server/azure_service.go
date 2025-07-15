@@ -81,7 +81,7 @@ func (s *azureService) GetKeyVaults(config db.AzureConfig, subscriptionID string
 	}
 
 	var keyVaults []db.AzureKeyVault
-	pager := client.NewListPager(nil, nil)
+	pager := client.NewListPager(nil)
 	
 	for pager.More() {
 		page, err := pager.NextPage(context.Background())
@@ -90,11 +90,14 @@ func (s *azureService) GetKeyVaults(config db.AzureConfig, subscriptionID string
 		}
 		
 		for _, vault := range page.Value {
-			if vault.ID != nil && vault.Name != nil && vault.Properties != nil && vault.Properties.VaultURI != nil && vault.Location != nil {
+			if vault.ID != nil && vault.Name != nil && vault.Location != nil {
+				// Construct vault URL from name - standard Azure Key Vault URL pattern
+				vaultURL := fmt.Sprintf("https://%s.vault.azure.net/", *vault.Name)
+				
 				keyVaults = append(keyVaults, db.AzureKeyVault{
 					ID:             *vault.ID,
 					Name:           *vault.Name,
-					VaultURL:       *vault.Properties.VaultURI,
+					VaultURL:       vaultURL,
 					Location:       *vault.Location,
 					SubscriptionID: subscriptionID,
 					AzureConfigID:  config.ID,
